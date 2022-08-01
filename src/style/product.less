@@ -1,0 +1,196 @@
+.product {
+    font-size: 16px;
+    .search {
+        margin: 20px 0;
+        .searchTag {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 60px;
+            margin-top: 10px;
+            .leftHead {
+                .label {
+                    display: flex;
+                    justify-content: flex-end;
+                    align-items: center;
+                    width: 50px;
+                }
+                .tagInputBox {
+                    margin-right: 8px;
+                    height: 35px;
+                }
+            }
+        }
+    }
+    .tableBox {
+        .pageBox {
+            margin-top: 20px;
+            float: right;
+        }
+    }
+}
+.content {
+    height: 530px;
+    overflow-y: scroll;
+    .productInfoRow {
+        display: flex;
+        margin: 20px 80px 0;
+        justify-content: space-between;
+        .productInfoItem {
+            display: flex;
+            width: 340px;
+            justify-content: flex-end;
+            .ant-upload-picture-card-wrapper {
+                width: 240px;
+            }
+        }
+
+        .colorWrap {
+            width: 100%;
+            .colorLabel {
+                width: 100px;
+                text-align: right;
+            }
+            .colorBox {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                width: 90%;
+                .colorList {
+                    display: flex;
+                    flex-wrap: wrap;
+                    // margin: 0 20px;
+                    .colorItem {
+                        position: relative;
+                        margin: 0px 5px 10px 5px;
+                        width: 24px;
+                        height: 24px;
+                        &:hover {
+                            &::after {
+                                position: absolute;
+                                content: 'x';
+                                width: 24px;
+                                height: 24px;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                color: #fff;
+                                background-color: rgba(0, 0, 0, 0.2);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        .uploadFile {
+            .ant-upload-select {
+                width: 240px;
+            }
+        }
+    }
+    .productTagInfo {
+        margin: 20px 0 0 130px;
+        width: 720px;
+    }
+}
+.tagWrap {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    .tagName {
+        display: flex;
+        justify-content: flex-end;
+        width: 75px;
+    }
+    .firstTagWrap {
+        width: 94%;
+        margin: 4px 0;
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+        white-space: nowrap;
+        overflow-x: auto;
+        .firstTagItem {
+            display: inline-block;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+            &:hover {
+                border-bottom: 1px solid #1890ff;
+                color: #1890ff;
+            }
+        }
+        .selFirstTagItem {
+            color: #1890ff;
+            border-bottom: 1px solid #1890ff;
+        }
+    }
+    .firstTagWrap::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+.priceItemBox {
+    display: flex;
+    flex-direction: column;
+}
+
+.colorList {
+    display: flex;
+    div {
+        height: 24px;
+        width: 24px;
+        margin-right: 10px;
+        border: 1px solid #eee;
+    }
+}
+
+.tagBox {
+    display: flex;
+    flex-direction: column;
+}
+
+.sizeBox {
+    display: flex;
+    background-color: #fff;
+    width: 240px;
+    padding: 16px;
+    border: 1px solid #eee;
+    .ant-checkbox-wrapper + .ant-checkbox-wrapper {
+        margin: 0;
+    }
+}
+
+.selSizeBox {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 180px;
+}
+
+.colorPickerWrap {
+    position: relative;
+    .colorPickBox {
+        position: absolute;
+        left: 0;
+        bottom: 32px;
+    }
+}
+
+.close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.filePieceList {
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+    margin-top: 20px;
+    .pieceItem {
+        display: flex;
+        justify-content: space-around;
+        margin-bottom: 2px;
+    }
+}

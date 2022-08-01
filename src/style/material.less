@@ -1,0 +1,82 @@
+.material {
+    font-size: 16px;
+    .search {
+        margin: 20px 0;
+        .searchTag {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 56px;
+            margin-top: 10px;
+            .leftHead {
+                display: flex;
+                .label {
+                    display: flex;
+                    justify-content: flex-end;
+                    align-items: center;
+                    width: 50px;
+                }
+                .tagInputBox {
+                    margin-right: 8px;
+                    height: 35px;
+                }
+            }
+        }
+    }
+    .tableBox {
+        .pageBox {
+            margin-top: 20px;
+            float: right;
+        }
+    }
+}
+
+.content {
+    height: 530px;
+    overflow-y: scroll;
+    .materialInfoItem {
+        margin-top: 20px;
+    }
+}
+
+.tagWrap {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    .label {
+        display: flex;
+        justify-content: flex-end;
+        width: 50px;
+    }
+    .firstTagWrap {
+        width: 94%;
+        margin: 4px 0;
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+        white-space: nowrap;
+        overflow-x: auto;
+        .firstTagItem {
+            display: inline-block;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+            &:hover {
+                border-bottom: 1px solid #1890ff;
+                color: #1890ff;
+            }
+        }
+        .selFirstTagItem {
+            color: #1890ff;
+            border-bottom: 1px solid #1890ff;
+        }
+    }
+    .firstTagWrap::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+.imgInfoBox {
+    display: flex;
+    flex-direction: column;
+}
