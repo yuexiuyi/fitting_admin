@@ -28,10 +28,10 @@ const CRouter = (props: CRouterProps) => {
     };
     const requireLogin = (component: React.ReactElement, permit: any) => {
         const permits = getPermits();
-        if (!checkLogin(permits)) {
-            // 线上环境判断是否登录
-            return <Redirect to={'/login'} />;
-        }
+        // if (!checkLogin(permits)) {
+        //     // 线上环境判断是否登录
+        //     return <Redirect to={'/app/background/index'} />;
+        // }
         return permit ? requireAuth(permit, component) : component;
     };
     const createMenu = (r: IFMenu) => {

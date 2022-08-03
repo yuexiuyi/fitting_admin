@@ -68,7 +68,7 @@ const HeaderCustom = (props: HeaderCustomProps) => {
     };
     const logout = () => {
         umbrella.removeLocalStorage('user');
-        history.push('/login');
+        history.push('/app/background/index');
     };
     return (
         <Header className="custom-theme header">
