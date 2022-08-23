@@ -84,6 +84,7 @@ const SearchTags = ({ tagTree, getSelTagCodeList, editTagCodeList }) => {
     const initTagTrees = async () => {
         if (tagTree) {
             const tagList = tagTree;
+            console.log(editTagCodeList, 'xxxxx');
 
             if (tagList && tagList.length > 1 && tagList[0].name !== '所有') {
                 tagList.unshift({ name: '所有', select: true });

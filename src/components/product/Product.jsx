@@ -364,7 +364,7 @@ const Product = () => {
 
     const showDeleteConfirm = (ids) => {
         confirm({
-            title: '您确定删除此背景图吗？',
+            title: '您确定删除此产品吗？',
             icon: <ExclamationCircleOutlined />,
             okText: '确定',
             okType: 'danger',
@@ -381,7 +381,7 @@ const Product = () => {
 
     const showAllDeleteConfirm = () => {
         confirm({
-            title: '您确定删除所有背景图吗？',
+            title: '您确定删除选中产品吗？',
             icon: <ExclamationCircleOutlined />,
             okText: '确定',
             okType: 'danger',

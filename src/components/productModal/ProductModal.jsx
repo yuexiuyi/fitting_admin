@@ -104,7 +104,7 @@ const ProductModal = ({
                 uid: data.uuid,
                 host: data.host,
                 dir: data.dir,
-                name: `${data.uuid}.${ext}`,
+                name: `${file.name}`,
                 key: `${data.dir}/${data.uuid}.${ext}`,
                 policy: data.policy,
                 OSSAccessKeyId: data.accessId,
@@ -608,23 +608,16 @@ const ProductModal = ({
     };
 
     const onFileChange = ({ fileList, imgList, setImgList, uploadData }) => {
-        let count = 0;
         fileList.forEach((item) => {
-            if (item.status === 'done') {
-                count++;
+            doneFile.current[fileList[0].uid] = fileList[0];
+            const { host, dir, uid, name } = uploadData.current;
+            const ext = fileList[0].type.split('/')[1]; // 后缀
+            const imgUrl = `${host}/${dir}/${uid}.${ext}`;
+            if (item.name === name) {
+                item.url = imgUrl;
+                setImgList(fileList);
             }
         });
-
-        if (count === fileList.length) {
-            fileList.forEach((item) => {
-                doneFile.current[item.uid] = item;
-                const { host, dir, uid } = uploadData.current;
-                const ext = item.type.split('/')[1]; // 后缀
-                const imgUrl = `${host}/${dir}/${uid}.${ext}`;
-                item.url = imgUrl;
-            });
-            setImgList(fileList);
-        }
     };
 
     const beforeFileUpload = ({ fileList, setImgList }) => {
@@ -850,7 +843,7 @@ const ProductModal = ({
                             beforeUpload={(_, fileList) => {
                                 beforeFileUpload({ fileList, setImgList: setFilePieceList });
                             }}
-                            onChange={({ fileList }) => {
+                            onChange={({ file, fileList }) => {
                                 onFileChange({
                                     fileList,
                                     imgList: filePieceList,

@@ -219,7 +219,7 @@ const Tags = ({ type }) => {
 
     const showDeleteConfirm = (ids) => {
         confirm({
-            title: '您确定删除此背景图吗？',
+            title: '您确定删除此标签吗？',
             icon: <ExclamationCircleOutlined />,
             okText: '确定',
             okType: 'danger',
@@ -235,7 +235,7 @@ const Tags = ({ type }) => {
     };
     const showAllDeleteConfirm = () => {
         confirm({
-            title: '您确定删除选中背景图吗？',
+            title: '您确定删除选中标签吗？',
             icon: <ExclamationCircleOutlined />,
             okText: '确定',
             okType: 'danger',

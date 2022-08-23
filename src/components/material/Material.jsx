@@ -85,18 +85,27 @@ const CollectionCreateForm = ({
     //监听修改弹框显示状态 visible的时候，初始化参数
     useEffect(() => {
         if (visible && modalState === 'edit') {
-            let codeList = [];
-            materialInfo.tag.forEach((item) => {
-                item.childTags.forEach((item2) => {
-                    item2.childTags.forEach((item3) => {
-                        codeList = [item.code, item2.code, item3.code];
-                    });
-                });
-            });
+            if (materialInfo.tagList) {
+                const oneItem =
+                    materialInfo.tagList && materialInfo.tagList[0]
+                        ? materialInfo.tagList[0]
+                        : { code: '' };
+                const twoItem =
+                    oneItem.code && oneItem.childTags && oneItem.childTags[0]
+                        ? oneItem.childTags[0]
+                        : { code: '' };
+                const threeItem =
+                    oneItem.code && twoItem.code && twoItem.childTags[0]
+                        ? twoItem.childTags[0]
+                        : { code: '' };
+
+                const codeList = [oneItem.code, twoItem.code, threeItem.code];
+
+                setEditTagCodeList(codeList);
+            }
             setName(materialInfo.name);
             setEnName(materialInfo.enName);
             setImg(materialInfo.picture);
-            setEditTagCodeList(codeList);
             setFileList([{ uid: materialInfo.key, url: materialInfo.picture }]);
         } else {
             setName('');
@@ -122,7 +131,7 @@ const CollectionCreateForm = ({
                     name,
                     enName,
                     id: materialInfo.key,
-                    tagCodeList: editTagCodeList,
+                    selTagCodeList,
                     source: 'SYS_UPLOAD',
                     imgUrl: img,
                 });
@@ -250,8 +259,8 @@ const Material = () => {
         },
         {
             title: '标签',
-            dataIndex: 'tag',
-            key: 'tag',
+            dataIndex: 'tagList',
+            key: 'tagList',
             render: (tagItem) => (
                 <div>
                     {tagItem !== null &&
@@ -334,7 +343,7 @@ const Material = () => {
                             createTime: item.createTime,
                         },
                         picture: item.imgUrl,
-                        tag: item.tagList,
+                        tagList: item.tagList,
                     };
                     newList.push(temp);
                 });
@@ -371,16 +380,14 @@ const Material = () => {
     };
 
     const updateMaterials = async (param) => {
-        param = [
-            {
-                ...param,
-            },
-        ];
+        param = {
+            ...param,
+        };
         const res = await updateMaterial(param);
 
         if (res.success) {
             await tagMaterial({
-                tagCodeList: selTagCodeList,
+                tagCodeList: param.selTagCodeList,
                 dataId: res.data,
             });
             message.success('修改成功');
@@ -395,7 +402,7 @@ const Material = () => {
 
     const showDeleteConfirm = (ids) => {
         confirm({
-            title: '您确定删除此背景图吗？',
+            title: '您确定删除此素材吗？',
             icon: <ExclamationCircleOutlined />,
             okText: '确定',
             okType: 'danger',
@@ -412,7 +419,7 @@ const Material = () => {
 
     const showAllDeleteConfirm = () => {
         confirm({
-            title: '您确定删除所有背景图吗？',
+            title: '您确定删除选中素材吗？',
             icon: <ExclamationCircleOutlined />,
             okText: '确定',
             okType: 'danger',

@@ -9161,6 +9161,11 @@ please-upgrade-node@^3.2.0:
   dependencies:
     semver-compare "^1.0.0"
 
+plupload@^2.3.9:
+  version "2.3.9"
+  resolved "https://registry.npmmirror.com/plupload/-/plupload-2.3.9.tgz#09cc879ea4568f0bf340863d5612bb145824e6b2"
+  integrity sha512-IepB6QEuW0vDrHwXBiKx/c+Kou/2QVUwvddbCC+MxMmN3ThNXJEN9bZU2uaEbagLDAE1l+vWPaNVcE5noD1ojA==
+
 pn@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/pn/-/pn-1.1.0.tgz#e2f4cef0e219f463c179ab37463e4e1ecdccbafb"

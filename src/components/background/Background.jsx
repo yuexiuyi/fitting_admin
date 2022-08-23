@@ -353,7 +353,7 @@ const Background = () => {
     //删除所有确认弹框
     const showAllDeleteConfirm = () => {
         confirm({
-            title: '您确定删除所有背景图吗？',
+            title: '您确定删除选中背景图吗？',
             icon: <ExclamationCircleOutlined />,
             okText: '确定',
             okType: 'danger',
