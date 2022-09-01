@@ -19,6 +19,8 @@ import Banners from './ui/banners';
 import Drags from './ui/Draggable';
 import Dashboard from './dashboard/Dashboard';
 import Background from './background/Background.jsx';
+import Design from './design/Design.jsx';
+import Guide from './guide/Guide.jsx';
 import Material from './material/Material.jsx';
 import MaterialIcons from './material/MaterialIcons.jsx';
 import Product from './product/Product.jsx';
@@ -47,9 +49,11 @@ export default {
     ProductIcons,
     MaterialIcons,
     Background,
+    Design,
     Product,
     Material,
     BasicTable,
+    Guide,
     AdvancedTable,
     AsynchronousTable,
     Echarts,

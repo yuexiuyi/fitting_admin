@@ -27,6 +27,10 @@ const CollectionCreateForm = ({
     const [name, setName] = useState('');
     const [enName, setEnName] = useState('');
     const [img, setImg] = useState('');
+    const [format, setFormat] = useState('');
+    const [width, setWidth] = useState('');
+    const [size, setSize] = useState('');
+    const [height, setHeight] = useState('');
     const [selTagCodeList, setSelTagCodeList] = useState([]); //保存标签参数
     const [editTagCodeList, setEditTagCodeList] = useState([]); //保存标签参数
     const [hasChild, setHasChild] = useState(true); //保存标签参数
@@ -134,6 +138,10 @@ const CollectionCreateForm = ({
                     selTagCodeList,
                     source: 'SYS_UPLOAD',
                     imgUrl: img,
+                    size,
+                    format,
+                    width,
+                    height,
                 });
             }}
             width={1200}
@@ -187,6 +195,17 @@ const CollectionCreateForm = ({
                                         const { host, dir, uid } = uploadData.current;
                                         const ext = item.type.split('/')[1]; // 后缀
                                         const imgUrl = `${host}/${dir}/${uid}.${ext}`;
+
+                                        const img = new Image();
+                                        img.onload = async () => {
+                                            const width = img.width;
+                                            const height = img.height;
+                                            setWidth(width);
+                                            setHeight(height);
+                                        };
+                                        img.src = imgUrl;
+                                        setSize(item.size);
+                                        setFormat(ext);
                                         setImg(imgUrl);
                                         setFileList([{ uid: '-1', url: imgUrl, status: 'done' }]);
                                     }
@@ -243,8 +262,8 @@ const Material = () => {
             render: (imgInfo) => (
                 <div className="imgInfoBox">
                     <span>文件大小：{imgInfo.size}</span>
+                    <span>文件宽高：{imgInfo.width + '*' + imgInfo.height}</span>
                     <span>文件格式：{imgInfo.format}</span>
-                    <span>DPI：{imgInfo.dpi}</span>
                     <span>创建时间：{imgInfo.createTime}</span>
                 </div>
             ),
@@ -337,9 +356,10 @@ const Material = () => {
                         name: item.name,
                         enName: item.enName,
                         imgInfo: {
-                            size: item.size,
+                            size: (item.size / 1024).toFixed(1) + 'KB',
                             format: item.format,
-                            dpi: item.dpi,
+                            height: item.height,
+                            width: item.width,
                             createTime: item.createTime,
                         },
                         picture: item.imgUrl,

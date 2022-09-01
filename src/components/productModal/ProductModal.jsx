@@ -183,14 +183,8 @@ const ProductModal = ({
                 setFileProList([{ uid: productInfo.key, url: productInfo.prodPsdImg }]);
             }
 
-            if (productInfo.filePieceList) {
-                productInfo.filePieceList.map((item) => {
-                    item.url = item.img;
-                    item.uid = item.id;
-                    item.zhName = item.name;
-                });
-
-                setFilePieceList(productInfo.filePieceList);
+            if (productInfo.clothPsdImg) {
+                setFileProList([{ uid: productInfo.key, url: productInfo.clothPsdImg }]);
             }
 
             setName(productInfo.name);
@@ -530,7 +524,6 @@ const ProductModal = ({
         }
         let list = [tagCode, ...selTagCodeList];
         console.log(tagCode, selTagCodeList, 'sList');
-        let pieceList = [];
         if (size.code && selSizeList.length > 0) {
             const sList = [size.code];
             selSizeList.map((item) => {
@@ -550,20 +543,6 @@ const ProductModal = ({
             const pList = [proTime.code, selProTime.code];
             console.log(pList, 'pList');
             list = list.concat(pList);
-        }
-
-        if (filePieceList.length) {
-            filePieceList.map((item) => {
-                pieceList.push({
-                    productId: productInfo.key,
-                    name: item.zhName,
-                    enName: item.enName,
-                    img: item.url,
-                    id: item.id,
-                });
-            });
-
-            console.log(pieceList);
         }
 
         setSizeVisible(false);
@@ -600,9 +579,9 @@ const ProductModal = ({
             img: imgList[0] ? imgList[0].url : '',
             hoverImg: hoverImgList[0] ? hoverImgList[0].url : '',
             prodPsdImg: fileProList[0] ? fileProList[0].url : '',
+            clothPsdImg: filePieceList[0] ? filePieceList[0].url : '',
             modelPsdImg: file2DList[0] ? file2DList[0].url : '',
             model3dImg: file3DList[0] ? file3DList[0].url : '',
-            pieceList,
             colorList: selColorList,
         });
     };
@@ -623,13 +602,42 @@ const ProductModal = ({
     const beforeFileUpload = ({ fileList, setImgList }) => {
         doneFile.current = {};
         let size = true;
+
         fileList.map((file) => {
             file.url = '';
             file.status = 'uploading';
+            // let canvas = document.createElement('canvas');
+            // const ctx = canvas.getContext('2d');
+            // canvas.width = 2048;
+            // canvas.height = 2048;
+            // let img = document.createElement('img');
+            // img.src = window.URL.createObjectURL(file);
+
+            // img.onload = () => {
+            //     ctx.clearRect(0, 0, canvas.width, canvas.height);
+            //     ctx.drawImage(img, canvas.width, canvas.height);
+            //     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            //     console.log(imageData, 'imageData');
+            //     for (let i = 0; i < imageData.data.length; i += 4) {
+            //             const item = {
+            //             r: imageData.data[i],
+            //             g: imageData.data[i + 1],
+            //             b: imageData.data[i + 2],
+            //             a: imageData.data[i + 3],
+            //         };
+            //             console.log(item);
+            //         if (item.r || item.g || item.b) {
+            //             console.log(i / canvas.width);
+            //             i = imageData.data.length;
+            //         }
+            //     }
+            //     console.log('结束');
+            // };
             if (file.size < MAXUPLOADSIZE) {
                 size = false;
             }
         });
+
         setImgList(fileList);
 
         return size;
@@ -826,15 +834,22 @@ const ProductModal = ({
                         </Upload>
                     </div>
                 </div>
+
                 <div className="productInfoRow">
                     <div className="productInfoItem uploadFile">
                         <span>上传切片：</span>
                         <Upload
                             showUploadList={{
+                                showDownloadIcon: true,
+                                downloadIcon: 'Download',
                                 showRemoveIcon: true,
-                                removeIcon: <CloseCircleOutlined />,
+                                removeIcon: (
+                                    <StarOutlined
+                                        onClick={(e) => console.log(e, 'custom removeIcon event')}
+                                    />
+                                ),
                             }}
-                            multiple={true}
+                            multiple={false}
                             fileList={filePieceList}
                             data={uploadFilePieceList.current}
                             action={async (file) => {
@@ -843,7 +858,7 @@ const ProductModal = ({
                             beforeUpload={(_, fileList) => {
                                 beforeFileUpload({ fileList, setImgList: setFilePieceList });
                             }}
-                            onChange={({ file, fileList }) => {
+                            onChange={({ fileList }) => {
                                 onFileChange({
                                     fileList,
                                     imgList: filePieceList,
@@ -855,34 +870,6 @@ const ProductModal = ({
                             <Button icon={<UploadOutlined />}>Upload Directory</Button>
                         </Upload>
                     </div>
-
-                    {filePieceList.length > 0 && (
-                        <div className="filePieceList">
-                            <div className="pieceItem">
-                                <span>切片中文名</span> <span>切片英文名</span>
-                            </div>
-                            {filePieceList.map((item, index) => {
-                                return (
-                                    <div className="pieceItem" key={index}>
-                                        <Input
-                                            style={inputPieceStyle}
-                                            value={item.zhName}
-                                            onChange={(e) => {
-                                                changePieceName(e.target.value, index);
-                                            }}
-                                        ></Input>
-                                        <Input
-                                            style={inputPieceStyle}
-                                            value={item.enName}
-                                            onChange={(e) => {
-                                                changePieceEnName(e.target.value, index);
-                                            }}
-                                        ></Input>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    )}
                 </div>
             </div>
         </Modal>

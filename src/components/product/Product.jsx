@@ -208,6 +208,20 @@ const Product = () => {
             ),
         },
         {
+            title: '生产文件解析状态',
+            dataIndex: 'clothPsdState',
+            key: 'clothPsdState',
+            width: 100,
+            render: (state) => (
+                <div>
+                    {state === 1 && '待解析'}
+                    {state === 2 && '解析中'}
+                    {state === 3 && '解析成功'}
+                    {state === 4 && '解析失败'}
+                </div>
+            ),
+        },
+        {
             title: '操作',
             key: 'action',
             width: 150,

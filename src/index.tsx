@@ -9,6 +9,8 @@ import * as apis from './service';
 import './style/lib/animate.css';
 import './style/index.less';
 import './style/background.less';
+import './style/guide.less';
+import './style/design.less';
 import './style/material.less';
 import './style/product.less';
 import './style/tags.less';
