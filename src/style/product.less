@@ -36,6 +36,16 @@
         display: flex;
         margin: 20px 80px 0;
         justify-content: space-between;
+        .productInfoType {
+            display: flex;
+            justify-content: flex-start;
+            width: 100%;
+            .label {
+                display: flex;
+                justify-content: flex-end;
+                width: 100px;
+            }
+        }
         .productInfoItem {
             display: flex;
             width: 340px;
@@ -193,4 +203,24 @@
         justify-content: space-around;
         margin-bottom: 2px;
     }
+}
+.productFile {
+    display: flex;
+    flex-direction: column;
+    .productFileItem {
+        display: flex;
+    }
+}
+
+.uploadInput {
+    display: none;
+}
+.productFile {
+    width: 240px;
+}
+.productFileLabel {
+    display: flex;
+    justify-content: flex-end;
+    width: 24px;
+    align-items: center;
 }

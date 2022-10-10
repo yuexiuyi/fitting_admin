@@ -11,6 +11,7 @@ import {
 import { getPolicy } from '../../service/util.js';
 import SearchTags from '../searchTags/SearchTags';
 import { getTagTree } from '../../service/tag.js';
+import { uploadOss } from '../../utils/index.js';
 
 const { confirm } = Modal;
 
@@ -48,10 +49,10 @@ const CollectionCreateForm = ({
             message.error('英文名不能为空');
             result = false;
         }
-        // if (!type) {
-        //     message.error('类型不能为空');
-        //     result = false;
-        // }
+        if (hasChild) {
+            message.error('类型不能为空');
+            result = false;
+        }
         if (!img) {
             message.error('上传图片不能为空');
             result = false;
@@ -238,6 +239,7 @@ const Material = () => {
     const [pageInfo, setPageInfo] = useState({ page: 1, limit: PAGESIZE }); //查询列表翻页 参数
     const [pagination, setPagination] = useState({ current: 1, pageSize: PAGESIZE, total: 0 }); //翻页组件 参数
     const [tagTree, setTagTree] = useState(null); //标签参数
+    const uploadBtn = useRef({});
 
     const columns = [
         {
@@ -389,10 +391,12 @@ const Material = () => {
         if (res.success) {
             setVisible(false);
             //打标签
-            await tagMaterial({
-                tagCodeList: param.selTagCodeList,
-                dataId: res.data,
-            });
+            if (param.selTagCodeList) {
+                await tagMaterial({
+                    tagCodeList: param.selTagCodeList,
+                    dataId: res.data,
+                });
+            }
 
             message.success('添加成功');
             queryMaterials();
@@ -477,7 +481,7 @@ const Material = () => {
         const res = await getTagTree('MATERIAL');
         if (res.success) {
             const tagList = res.data.list;
-            tagList.unshift({ name: '所有', select: true });
+            // tagList.unshift({ name: '所有', select: true });
             setTagTree(tagList);
         }
     };
@@ -489,6 +493,45 @@ const Material = () => {
     useEffect(() => {
         queryMaterials();
     }, [pageInfo]);
+
+    const uploadList = () => {
+        const materialsList = [];
+        const list = uploadBtn.current.files;
+        for (let i = 0; i < list.length; i++) {
+            const item = list[i];
+            const reader = new FileReader();
+            reader.readAsDataURL(item);
+            reader.onload = async function (e) {
+                const dataUrl = this.result;
+                const imgUrl = await uploadOss(dataUrl);
+                const name = item.name.split('.')[0];
+                const format = item.name.split('.')[1];
+                const size = item.size;
+                const img = new Image();
+                img.src = imgUrl;
+                img.onload = async () => {
+                    const width = img.width;
+                    const height = img.height;
+                    materialsList[i] = {
+                        source: 'SYS_UPLOAD',
+                        imgUrl,
+                        name,
+                        enName: name,
+                        size,
+                        format,
+                        width,
+                        height,
+                    };
+
+                    const res = await addMaterial(materialsList[i]);
+                    if (res.success) {
+                        message.success(name + '添加成功');
+                        queryMaterials();
+                    }
+                };
+            };
+        }
+    };
 
     return (
         <div className="material">
@@ -518,6 +561,27 @@ const Material = () => {
                         >
                             搜索
                         </Button>
+
+                        <Button
+                            type="primary"
+                            style={{
+                                marginRight: 10,
+                            }}
+                            onClick={() => {
+                                uploadBtn.current.click();
+                            }}
+                        >
+                            批量新增背景图
+                        </Button>
+                        <input
+                            className="uploadInput"
+                            ref={uploadBtn}
+                            type="file"
+                            multiple
+                            onChange={() => {
+                                uploadList();
+                            }}
+                        />
                         <Button
                             type="primary"
                             onClick={() => {

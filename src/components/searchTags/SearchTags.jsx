@@ -23,9 +23,8 @@ const SearchTags = ({ tagTree, getSelTagCodeList, editTagCodeList }) => {
         if (childTags && childTags.length > 1 && childTags[0].name !== '所有') {
             childTags.unshift({ name: '所有', select: true });
         }
-
         setTagCodeList(list);
-        setHasChild(!!childTags && tagCodeList[0]);
+        setHasChild(!!childTags && !!list[0]);
         setFirstTypeList(newList);
         setSecondTypeObj(newList[selIndex]);
         setThirdTypeObj(null);
@@ -47,13 +46,13 @@ const SearchTags = ({ tagTree, getSelTagCodeList, editTagCodeList }) => {
         }
 
         setTagCodeList(list);
-        setHasChild(!!childTags && tagCodeList[1]);
+        setHasChild(!!childTags.length && !!list[1]);
+
         setSecondTypeObj({
             ...secondTypeObj,
             childTags: newList,
         });
         setThirdTypeObj(newList[selIndex]);
-        console.log(tagCodeList, '222222');
     };
 
     const thirdOptionChange = (selIndex) => {
@@ -67,10 +66,9 @@ const SearchTags = ({ tagTree, getSelTagCodeList, editTagCodeList }) => {
         });
 
         setTagCodeList(list);
-        setHasChild(!tagCodeList[2]);
+        setHasChild(false);
         setTagCodeList(list);
         setThirdTypeObj({ ...thirdTypeObj, childTags: newList });
-        console.log(tagCodeList, '33333');
     };
 
     const handleScroll = (e) => {
@@ -84,7 +82,6 @@ const SearchTags = ({ tagTree, getSelTagCodeList, editTagCodeList }) => {
     const initTagTrees = async () => {
         if (tagTree) {
             const tagList = tagTree;
-            console.log(editTagCodeList, 'xxxxx');
 
             if (tagList && tagList.length > 1 && tagList[0].name !== '所有') {
                 tagList.unshift({ name: '所有', select: true });
@@ -100,11 +97,15 @@ const SearchTags = ({ tagTree, getSelTagCodeList, editTagCodeList }) => {
                                 item2.childTags.forEach((item3) => {
                                     item3.select = item3.code === editTagCodeList[2];
                                 });
-                                item2.childTags.unshift({ name: '所有' });
+                                if (item2.childTags[0].name !== '所有') {
+                                    item2.childTags.unshift({ name: '所有' });
+                                }
                                 setThirdTypeObj(item2);
                             }
                         });
-                        item.childTags.unshift({ name: '所有' });
+                        if (item.childTags[0].name !== '所有') {
+                            item.childTags.unshift({ name: '所有' });
+                        }
                         setSecondTypeObj(item);
                     }
                 });

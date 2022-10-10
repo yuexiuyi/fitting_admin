@@ -5,11 +5,13 @@ import {
     UploadOutlined,
     CloseCircleOutlined,
     StarOutlined,
+    LoadingOutlined,
 } from '@ant-design/icons';
 import { Button, Input, Space, Upload, Modal, Dropdown, message, Menu, Checkbox } from 'antd';
 import { getPolicy } from '../../service/util.js';
 import SearchTags from '../searchTags/SearchTags.jsx';
 import { SketchPicker } from 'react-color';
+import { uploadOss } from '../../utils/index.js';
 
 const MAXUPLOADSIZE = 100 * 1000 * 1000;
 
@@ -28,6 +30,7 @@ const ProductModal = ({
     const [name, setName] = useState(''); //中文名
     const [enName, setEnName] = useState(''); //英文名
     const [weight, setWeight] = useState(''); //重量
+    const [mode, setMode] = useState(false); //重量
 
     const [selFabric, setSelFabric] = useState({}); //选中面料
     const [selProTime, setSelProTime] = useState(''); //选中生产文件
@@ -61,7 +64,7 @@ const ProductModal = ({
     const uploadFile3DList = useRef({}); //上传数据
 
     const [fileProList, setFileProList] = useState([]); //生产文件Upload组件参数
-    const uploadFileProList = useRef({}); //上传数据
+    const [count, setCount] = useState(0); //生产文件Upload组件参数
 
     const [filePieceList, setFilePieceList] = useState([]); //切片Upload组件参数
     const uploadFilePieceList = useRef({}); //上传数据
@@ -77,14 +80,78 @@ const ProductModal = ({
             message.error('英文名不能为空');
             result = false;
         }
-        // if (hasChild) {
-        //     message.error('请选择标签');
-        //     result = false;
-        // }
-        // if (!img) {
-        //     message.error('上传图片不能为空');
-        //     result = false;
-        // }
+
+        if (hasChild) {
+            message.error('请选择标签');
+            result = false;
+        }
+
+        if (!price) {
+            message.error('单价不能为空');
+            result = false;
+        }
+
+        if (!weight) {
+            message.error('重量不能为空');
+            result = false;
+        }
+
+        if (!lessPrice) {
+            message.error('1-9件价格不能为空');
+            result = false;
+        }
+
+        if (!mediumPrice) {
+            message.error('10-49件价格不能为空');
+            result = false;
+        }
+
+        if (!morePrice) {
+            message.error('50+件价格不能为空');
+            result = false;
+        }
+        if (!imgList[0] || !imgList[0].url) {
+            message.error('封面不能为空');
+            result = false;
+        }
+
+        if (!hoverImgList[0] || !hoverImgList[0].url) {
+            message.error('样图不能为空');
+            result = false;
+        }
+
+        if (!filePieceList[0] || !filePieceList[0].url) {
+            message.error('切片不能为空');
+            result = false;
+        }
+
+        if (!file3DList[0] || !file3DList[0].url) {
+            message.error('3D模特不能为空');
+            result = false;
+        }
+
+        if (!file2DList[0] || !file2DList[0].url) {
+            message.error('2D模特不能为空');
+            result = false;
+        }
+
+        if (selColorList.length === 0) {
+            message.error('颜色不能为空');
+            result = false;
+        }
+
+        if (!fileProList || !fileProList.length) {
+            message.error('生产文件不能为空');
+            result = false;
+        }
+
+        fileProList.forEach((item) => {
+            if (!item || !item.url) {
+                message.error('生产文件不能为空');
+                result = false;
+            }
+        });
+
         return result;
     };
 
@@ -180,11 +247,11 @@ const ProductModal = ({
             }
 
             if (productInfo.prodPsdImg) {
-                setFileProList([{ uid: productInfo.key, url: productInfo.prodPsdImg }]);
+                setFileProList(productInfo.prodPsdImg);
             }
 
             if (productInfo.clothPsdImg) {
-                setFileProList([{ uid: productInfo.key, url: productInfo.clothPsdImg }]);
+                setFilePieceList([{ uid: productInfo.key, url: productInfo.clothPsdImg }]);
             }
 
             setName(productInfo.name);
@@ -208,18 +275,11 @@ const ProductModal = ({
             setMorePrice('');
             setSelColorList([]);
             setEditTagCodeList([]);
-
             setImgList([]);
-
             setHoverImgList([]);
-
             setFile2DList([]);
-
             setFile3DList([]);
-
             setFileProList([]);
-
-            setFilePieceList([]);
         }
     }, [visible, size, fabric, proTime]);
 
@@ -517,31 +577,40 @@ const ProductModal = ({
             </div>
         );
     };
+    const onTypeChange = (e) => {
+        setMode(e.target.checked);
+    };
 
+    const renderType = () => {
+        return (
+            <div className="productInfoType">
+                <span className="label">局部印：</span>
+                <div style={{ width: 340 }}>
+                    <Checkbox checked={mode} onChange={onTypeChange} />
+                </div>
+            </div>
+        );
+    };
     const onOK = () => {
         if (!verifier()) {
             return;
         }
         let list = [tagCode, ...selTagCodeList];
-        console.log(tagCode, selTagCodeList, 'sList');
         if (size.code && selSizeList.length > 0) {
             const sList = [size.code];
             selSizeList.map((item) => {
                 sList.push(item.code);
             });
-            console.log(sList, 'sList');
             list = list.concat(sList);
         }
 
         if ((fabric.code, selFabric.code)) {
             const fList = [fabric.code, selFabric.code];
-            console.log(fList, 'fList');
             list = list.concat(fList);
         }
 
         if ((proTime.code, selProTime.code)) {
             const pList = [proTime.code, selProTime.code];
-            console.log(pList, 'pList');
             list = list.concat(pList);
         }
 
@@ -578,11 +647,12 @@ const ProductModal = ({
             ],
             img: imgList[0] ? imgList[0].url : '',
             hoverImg: hoverImgList[0] ? hoverImgList[0].url : '',
-            prodPsdImg: fileProList[0] ? fileProList[0].url : '',
+            prodPsdImg: fileProList,
             clothPsdImg: filePieceList[0] ? filePieceList[0].url : '',
             modelPsdImg: file2DList[0] ? file2DList[0].url : '',
             model3dImg: file3DList[0] ? file3DList[0].url : '',
             colorList: selColorList,
+            mode: mode ? 1 : 0,
         });
     };
 
@@ -606,33 +676,6 @@ const ProductModal = ({
         fileList.map((file) => {
             file.url = '';
             file.status = 'uploading';
-            // let canvas = document.createElement('canvas');
-            // const ctx = canvas.getContext('2d');
-            // canvas.width = 2048;
-            // canvas.height = 2048;
-            // let img = document.createElement('img');
-            // img.src = window.URL.createObjectURL(file);
-
-            // img.onload = () => {
-            //     ctx.clearRect(0, 0, canvas.width, canvas.height);
-            //     ctx.drawImage(img, canvas.width, canvas.height);
-            //     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            //     console.log(imageData, 'imageData');
-            //     for (let i = 0; i < imageData.data.length; i += 4) {
-            //             const item = {
-            //             r: imageData.data[i],
-            //             g: imageData.data[i + 1],
-            //             b: imageData.data[i + 2],
-            //             a: imageData.data[i + 3],
-            //         };
-            //             console.log(item);
-            //         if (item.r || item.g || item.b) {
-            //             console.log(i / canvas.width);
-            //             i = imageData.data.length;
-            //         }
-            //     }
-            //     console.log('结束');
-            // };
             if (file.size < MAXUPLOADSIZE) {
                 size = false;
             }
@@ -654,6 +697,37 @@ const ProductModal = ({
         list[index].enName = value;
         setFilePieceList(list);
     };
+
+    const uploadList = (index, size) => {
+        const proList = [...fileProList];
+        proList[index] = {
+            size,
+        };
+        setFileProList(proList);
+
+        const item = document.getElementById('uploadPro' + index).files[0];
+        const reader = new FileReader();
+        reader.readAsDataURL(item);
+        reader.onload = async function (e) {
+            const ext = item.name.split('.')[1];
+            const url = await uploadOss(this.result, ext);
+            document.getElementById('uploadPro' + index).url = url;
+
+            setCount(count + 1);
+        };
+    };
+
+    useEffect(() => {
+        const proList = [...fileProList];
+        selSizeList.forEach((_, index) => {
+            const url = document.getElementById('uploadPro' + index).url;
+            if (url) {
+                proList[index].url = url;
+            }
+        });
+
+        setFileProList(proList);
+    }, [count]);
 
     return (
         <Modal
@@ -680,6 +754,7 @@ const ProductModal = ({
                 {renderPrice()}
                 {renderTag()}
                 {renderColor()}
+                <div className="productInfoRow">{renderType()}</div>
                 <div className="productInfoRow">
                     <div className="productInfoItem">
                         <span>上传封面：</span>
@@ -807,31 +882,59 @@ const ProductModal = ({
                 <div className="productInfoRow">
                     <div className="productInfoItem uploadFile">
                         <span>上传生产文件：</span>
-                        <Upload
-                            showUploadList={{
-                                showRemoveIcon: true,
-                                removeIcon: <CloseCircleOutlined />,
-                            }}
-                            multiple={false}
-                            fileList={fileProList}
-                            data={uploadFileProList.current}
-                            action={async (file) => {
-                                return getOssPolify({ file, uploadImg: uploadFileProList });
-                            }}
-                            beforeUpload={(_, fileList) => {
-                                beforeFileUpload({ fileList, setImgList: setFileProList });
-                            }}
-                            onChange={({ fileList }) => {
-                                onFileChange({
-                                    fileList,
-                                    imgList: fileProList,
-                                    setImgList: setFileProList,
-                                    uploadData: uploadFileProList,
-                                });
-                            }}
-                        >
-                            <Button icon={<UploadOutlined />}>Upload Directory</Button>
-                        </Upload>
+                        <div className="productFile">
+                            {selSizeList.map((item, index) => {
+                                return (
+                                    <div className="productFileItem" key={index}>
+                                        <span className="productFileLabel">{item.name}：</span>
+                                        <Button
+                                            style={{
+                                                marginRight: 4,
+                                            }}
+                                            onClick={() => {
+                                                document
+                                                    .getElementById('uploadPro' + index)
+                                                    .click();
+                                            }}
+                                        >
+                                            <UploadOutlined />
+                                            上传
+                                        </Button>
+                                        {fileProList[index] && (
+                                            <Button
+                                                style={{
+                                                    width: 105,
+                                                }}
+                                                disabled={fileProList[index].url ? false : true}
+                                                onClick={() => {
+                                                    if (fileProList[index].url) {
+                                                        window.open(fileProList[index].url);
+                                                    }
+                                                }}
+                                            >
+                                                {fileProList[index].url ? (
+                                                    `${item.name}生产文件`
+                                                ) : (
+                                                    <>
+                                                        <LoadingOutlined />
+                                                        {` 上传中`}
+                                                    </>
+                                                )}
+                                            </Button>
+                                        )}
+
+                                        <input
+                                            id={'uploadPro' + index}
+                                            className="uploadInput"
+                                            type="file"
+                                            onChange={() => {
+                                                uploadList(index, item.name);
+                                            }}
+                                        />
+                                    </div>
+                                );
+                            })}
+                        </div>
                     </div>
                 </div>
 

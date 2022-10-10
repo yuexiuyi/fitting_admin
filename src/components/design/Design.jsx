@@ -35,15 +35,16 @@ const Design = () => {
             render: (mockupImgList) => {
                 return (
                     <div className="mockupWrap">
-                        {mockupImgList.map((item, index) => {
-                            return (
-                                <img
-                                    className="mockupImg"
-                                    src={item.mockupImgUrl}
-                                    key={index}
-                                ></img>
-                            );
-                        })}
+                        {mockupImgList &&
+                            mockupImgList.map((item, index) => {
+                                return (
+                                    <img
+                                        className="mockupImg"
+                                        src={item.mockupImgUrl}
+                                        key={index}
+                                    ></img>
+                                );
+                            })}
                     </div>
                 );
             },
@@ -64,6 +65,7 @@ const Design = () => {
             title: '操作',
             dataIndex: 'mergeImage',
             key: 'mergeImage',
+            width: 300,
             render: (_, line) => {
                 return (
                     line.mergeImage && (
@@ -165,6 +167,7 @@ const Design = () => {
                     dataSource={designList}
                     columns={columns}
                     pagination={false}
+                    scroll={{ x: 1800 }}
                 />
                 <div className="pageBox">
                     <Pagination

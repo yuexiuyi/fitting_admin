@@ -20,6 +20,7 @@ import {
     updateBackground,
 } from '../../service/background.js';
 import { getPolicy } from '../../service/util.js';
+import { uploadOss } from '../../utils/index.js';
 
 const { confirm } = Modal;
 
@@ -192,6 +193,8 @@ const Background = () => {
     const [backgroundList, setBackgroundList] = useState([]); //背景图列表
     const [pageInfo, setPageInfo] = useState({ page: 1, limit: PAGESIZE }); //查询列表翻页 参数
     const [pagination, setPagination] = useState({ current: 1, pageSize: PAGESIZE, total: 0 }); //翻页组件 参数
+    const uploadBtn = useRef({});
+
     const columns = [
         {
             title: '序号',
@@ -395,6 +398,33 @@ const Background = () => {
             </Menu>
         );
     };
+    const uploadList = () => {
+        const backgroundList = [];
+        const list = uploadBtn.current.files;
+        for (let i = 0; i < list.length; i++) {
+            const item = list[i];
+            const reader = new FileReader();
+            console.log(item.name);
+            reader.readAsDataURL(item);
+            reader.onload = async function (e) {
+                const dataUrl = this.result;
+                const img = await uploadOss(dataUrl);
+                const name = item.name.split('.')[0];
+                backgroundList[i] = {
+                    type: 'Indoor',
+                    img,
+                    name,
+                    enName: name,
+                };
+                const res = await addBackground(backgroundList[i]);
+                if (res.success) {
+                    message.success(name + '添加成功');
+                    setBackgroundType('全部');
+                    queryBackgroundTree();
+                }
+            };
+        }
+    };
 
     return (
         <div className="background">
@@ -411,6 +441,26 @@ const Background = () => {
                     </Dropdown>
                 </div>
                 <div>
+                    <Button
+                        type="primary"
+                        style={{
+                            marginRight: 10,
+                        }}
+                        onClick={() => {
+                            uploadBtn.current.click();
+                        }}
+                    >
+                        批量新增背景图
+                    </Button>
+                    <input
+                        className="uploadInput"
+                        ref={uploadBtn}
+                        type="file"
+                        multiple
+                        onChange={() => {
+                            uploadList();
+                        }}
+                    />
                     <Button
                         type="primary"
                         onClick={() => {
