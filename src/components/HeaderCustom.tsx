@@ -112,7 +112,7 @@ const HeaderCustom = (props: HeaderCustomProps) => {
                 <SubMenu
                     title={
                         <span className="avatar">
-                            <img src={avater} alt="头像" />
+                            {/* <img src={avater} alt="头像" /> */}
                             <i className="on bottom b-white" />
                         </span>
                     }

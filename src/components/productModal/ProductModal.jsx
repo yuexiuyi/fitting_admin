@@ -57,6 +57,12 @@ const ProductModal = ({
     const [hoverImgList, setHoverImgList] = useState([]); //样图Upload组件参数
     const uploadHoverImg = useRef({}); //样图上传数据
 
+    const [frontImgList, setFrontImgList] = useState([]); //样图Upload组件参数
+    const uploadFrontImg = useRef({}); //样图上传数据
+
+    const [backImgList, setBackImgList] = useState([]); //样图Upload组件参数
+    const uploadBackImg = useRef({}); //样图上传数据
+
     const [file2DList, setFile2DList] = useState([]); //2D psd Upload组件参数
     const uploadFile2DList = useRef({}); //2D psd 上传数据
 
@@ -120,37 +126,49 @@ const ProductModal = ({
             result = false;
         }
 
-        if (!filePieceList[0] || !filePieceList[0].url) {
-            message.error('切片不能为空');
-            result = false;
-        }
+        if (mode) {
+            if (!frontImgList[0] || !frontImgList[0].url) {
+                message.error('正面不能为空');
+                result = false;
+            }
 
-        if (!file3DList[0] || !file3DList[0].url) {
-            message.error('3D模特不能为空');
-            result = false;
-        }
+            if (!backImgList[0] || !backImgList[0].url) {
+                message.error('反面不能为空');
+                result = false;
+            }
+        } else {
+            if (!filePieceList[0] || !filePieceList[0].url) {
+                message.error('切片不能为空');
+                result = false;
+            }
 
-        if (!file2DList[0] || !file2DList[0].url) {
-            message.error('2D模特不能为空');
-            result = false;
-        }
+            if (!file3DList[0] || !file3DList[0].url) {
+                message.error('3D模特不能为空');
+                result = false;
+            }
 
-        if (selColorList.length === 0) {
-            message.error('颜色不能为空');
-            result = false;
-        }
+            if (!file2DList[0] || !file2DList[0].url) {
+                message.error('2D模特不能为空');
+                result = false;
+            }
 
-        if (!fileProList || !fileProList.length) {
-            message.error('生产文件不能为空');
-            result = false;
-        }
+            if (selColorList.length === 0) {
+                message.error('颜色不能为空');
+                result = false;
+            }
 
-        fileProList.forEach((item) => {
-            if (!item || !item.url) {
+            if (!fileProList || !fileProList.length) {
                 message.error('生产文件不能为空');
                 result = false;
             }
-        });
+
+            fileProList.forEach((item) => {
+                if (!item || !item.url) {
+                    message.error('生产文件不能为空');
+                    result = false;
+                }
+            });
+        }
 
         return result;
     };
@@ -254,13 +272,21 @@ const ProductModal = ({
                 setFilePieceList([{ uid: productInfo.key, url: productInfo.clothPsdImg }]);
             }
 
+            if (productInfo.backImg) {
+                setBackImgList([{ uid: productInfo.key, url: productInfo.backImg }]);
+            }
+
+            if (productInfo.frontImg) {
+                setFrontImgList([{ uid: productInfo.key, url: productInfo.frontImg }]);
+            }
+
             setName(productInfo.name);
             setEnName(productInfo.enName);
             setSelSizeList(productInfo.sizeList);
             setSelFabric(productInfo.fabricList);
             setSelProTime(productInfo.proTime);
             setWeight(productInfo.weight);
-
+            setMode(productInfo.mode);
             setSelColorList(productInfo.color);
         } else {
             setName('');
@@ -275,7 +301,10 @@ const ProductModal = ({
             setMorePrice('');
             setSelColorList([]);
             setEditTagCodeList([]);
+            setMode(false);
             setImgList([]);
+            setBackImgList([]);
+            setFrontImgList([]);
             setHoverImgList([]);
             setFile2DList([]);
             setFile3DList([]);
@@ -647,6 +676,8 @@ const ProductModal = ({
             ],
             img: imgList[0] ? imgList[0].url : '',
             hoverImg: hoverImgList[0] ? hoverImgList[0].url : '',
+            frontImg: frontImgList[0] ? frontImgList[0].url : '',
+            backImg: backImgList[0] ? backImgList[0].url : '',
             prodPsdImg: fileProList,
             clothPsdImg: filePieceList[0] ? filePieceList[0].url : '',
             modelPsdImg: file2DList[0] ? file2DList[0].url : '',
@@ -815,7 +846,68 @@ const ProductModal = ({
                         </Upload>
                     </div>
                 </div>
-                <div className="productInfoRow">
+                <div className="productInfoRow" style={{ display: !mode ? 'none' : 'flex' }}>
+                    <div className="productInfoItem">
+                        <span>上传正面：</span>
+                        <Upload
+                            showUploadList={{
+                                showRemoveIcon: true,
+                                removeIcon: <CloseCircleOutlined />,
+                            }}
+                            action={async (file) => {
+                                return getOssPolify({ file, uploadImg: uploadFrontImg });
+                            }}
+                            listType="picture-card"
+                            multiple={false}
+                            fileList={frontImgList}
+                            data={uploadFrontImg.current}
+                            beforeUpload={(_, fileList) => {
+                                beforeFileUpload({ fileList, setImgList: setFrontImgList });
+                            }}
+                            onChange={({ fileList }) => {
+                                onFileChange({
+                                    fileList,
+                                    imgList: frontImgList,
+                                    setImgList: setFrontImgList,
+                                    uploadData: uploadFrontImg,
+                                });
+                            }}
+                        >
+                            {frontImgList && frontImgList.length >= 1 ? null : uploadButton}
+                        </Upload>
+                    </div>
+                    <div className="productInfoItem">
+                        <span>上传反面：</span>
+                        <Upload
+                            showUploadList={{
+                                showRemoveIcon: true,
+                                removeIcon: <CloseCircleOutlined />,
+                            }}
+                            listType="picture-card"
+                            multiple={false}
+                            fileList={backImgList}
+                            data={uploadBackImg.current}
+                            action={async (file) => {
+                                return getOssPolify({ file, uploadImg: uploadBackImg });
+                            }}
+                            beforeUpload={(_, fileList) => {
+                                beforeFileUpload({ fileList, setImgList: setBackImgList });
+                            }}
+                            onChange={({ fileList }) => {
+                                onFileChange({
+                                    fileList,
+                                    imgList: backImgList,
+                                    setImgList: setBackImgList,
+                                    uploadData: uploadBackImg,
+                                });
+                            }}
+                        >
+                            {backImgList && backImgList.length >= 1 ? null : uploadButton}
+                        </Upload>
+                    </div>
+                </div>
+
+                <div className="productInfoRow" style={{ display: mode ? 'none' : 'flex' }}>
                     <div className="productInfoItem uploadFile">
                         <span>上传2D模特：</span>
                         <Upload
@@ -879,7 +971,7 @@ const ProductModal = ({
                         </Upload>
                     </div>
                 </div>
-                <div className="productInfoRow">
+                <div className="productInfoRow" style={{ display: mode ? 'none' : 'flex' }}>
                     <div className="productInfoItem uploadFile">
                         <span>上传生产文件：</span>
                         <div className="productFile">
@@ -937,8 +1029,7 @@ const ProductModal = ({
                         </div>
                     </div>
                 </div>
-
-                <div className="productInfoRow">
+                <div className="productInfoRow" style={{ display: mode ? 'none' : 'flex' }}>
                     <div className="productInfoItem uploadFile">
                         <span>上传切片：</span>
                         <Upload

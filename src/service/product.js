@@ -46,4 +46,43 @@ const offShelf = (dataId) => {
     });
 };
 
-export { getProduct, deleteProduct, addProduct, updateProduct, tagProduct, offShelf, onShelf };
+const getCover = (data) => {
+    return post({
+        url: `${config.API}/maskLayer/list`,
+        data,
+    });
+};
+
+const deleteCover = (ids) => {
+    return Delete({
+        url: `${config.API}/maskLayer/delete?ids=${ids}`,
+    });
+};
+
+const updateCover = (data) => {
+    return post({
+        url: `${config.API}/maskLayer/update`,
+        data,
+    });
+};
+
+const addCover = (data) => {
+    return post({
+        url: `${config.API}/maskLayer/save`,
+        data,
+    });
+};
+
+export {
+    getProduct,
+    deleteProduct,
+    addProduct,
+    updateProduct,
+    tagProduct,
+    offShelf,
+    onShelf,
+    getCover,
+    deleteCover,
+    updateCover,
+    addCover,
+};

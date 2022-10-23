@@ -45,6 +45,11 @@ const menus: {
             subs: [
                 { key: '/app/Product/Product', title: '产品管理', component: 'Product' },
                 { key: '/app/Product/ProductIcons', title: '标签管理', component: 'ProductIcons' },
+                {
+                    key: '/app/Product/Cover',
+                    title: '遮罩管理',
+                    component: 'Cover',
+                },
             ],
         },
     ],

@@ -25,6 +25,7 @@ import Material from './material/Material.jsx';
 import MaterialIcons from './material/MaterialIcons.jsx';
 import Product from './product/Product.jsx';
 import ProductIcons from './product/ProductIcons.jsx';
+import Cover from './product/Cover.jsx';
 import Gallery from './ui/Gallery';
 import BasicAnimations from './animation/BasicAnimations';
 import ExampleAnimations from './animation/ExampleAnimations';
@@ -47,6 +48,7 @@ const WysiwygBundle = Loadable({
 
 export default {
     ProductIcons,
+    Cover,
     MaterialIcons,
     Background,
     Design,
